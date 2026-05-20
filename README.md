@@ -60,7 +60,7 @@ pip install -r requirements.txt
 
 ---
 
-## ✅ Executar o jogo
+##  Executar o jogo
 
 Após instalar as dependências, execute:
 

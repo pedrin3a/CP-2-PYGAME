@@ -1,6 +1,7 @@
 
 import pygame
 import random
+import math
 
 pygame.init()
 
@@ -18,6 +19,26 @@ pygame.display.set_caption("TRANSOFORMOUSE")
 clock = pygame.time.Clock()
 
 # =========================================
+# FUNDO
+# =========================================
+background = pygame.image.load("background.png")
+background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+# =========================================
+# SPRITE DO RATINHO
+# =========================================
+mouse_img = pygame.image.load("mouse.png").convert_alpha()
+mouse_img = pygame.transform.scale(mouse_img, (60, 60))
+# =========================================
+# SPRITE DO QUEIJO
+# =========================================
+cheese_img = pygame.image.load("cheese.png").convert_alpha()
+cheese_img = pygame.transform.scale(cheese_img, (40, 40))
+# =========================================
+# SPRITE DA TOCA
+# =========================================
+hole_img = pygame.image.load("hole.png").convert_alpha()
+hole_img = pygame.transform.scale(hole_img, (55, 55))
+# =========================================
 # CORES
 # =========================================
 WHITE = (255, 255, 255)
@@ -28,52 +49,151 @@ RED = (255, 80, 80)
 YELLOW = (255, 220, 0)
 BROWN = (140, 90, 50)
 GRAY = (150, 150, 160)
+PURPLE = (160, 80, 255)
 
 font = pygame.font.SysFont("arial", 28)
-big_font = pygame.font.SysFont("arial", 60, bold=True)
+small_font = pygame.font.SysFont("arial", 22)
+big_font = pygame.font.SysFont("arial", 72, bold=True)
 
 # =========================================
-# FASES
+# FASES DIFÍCEIS
 # =========================================
 levels = [
 
+    # =========================================
+    # FASE 1
+    # =========================================
     {
         "platforms": [
             pygame.Rect(0, 650, 1200, 50),
-            pygame.Rect(200, 550, 200, 25),
-            pygame.Rect(500, 470, 220, 25),
-            pygame.Rect(850, 380, 180, 25),
-            pygame.Rect(950, 250, 180, 25),
+
+            pygame.Rect(120, 560, 120, 20),
+            pygame.Rect(320, 500, 120, 20),
+            pygame.Rect(520, 440, 120, 20),
+            pygame.Rect(720, 380, 120, 20),
+            pygame.Rect(920, 320, 120, 20),
         ],
 
         "traps": [
-            pygame.Rect(420, 630, 100, 20),
-            pygame.Rect(740, 630, 100, 20),
+            pygame.Rect(250, 630, 120, 20),
+            pygame.Rect(560, 630, 120, 20),
+            pygame.Rect(860, 630, 120, 20),
         ],
 
-        "cheese": pygame.Rect(1020, 190, 30, 30),
+        "cheese": pygame.Rect(960, 270, 30, 30),
 
-        "hole": pygame.Rect(1100, 580, 60, 60)
+        "hole": pygame.Rect(70, 580, 60, 60)
     },
 
+    # =========================================
+    # FASE 2
+    # =========================================
     {
         "platforms": [
             pygame.Rect(0, 650, 1200, 50),
-            pygame.Rect(100, 560, 180, 25),
-            pygame.Rect(400, 480, 180, 25),
-            pygame.Rect(700, 390, 180, 25),
-            pygame.Rect(980, 300, 160, 25),
+
+            pygame.Rect(100, 570, 90, 20),
+            pygame.Rect(260, 510, 90, 20),
+            pygame.Rect(430, 450, 90, 20),
+            pygame.Rect(610, 390, 90, 20),
+            pygame.Rect(800, 330, 90, 20),
+            pygame.Rect(980, 260, 90, 20),
         ],
 
         "traps": [
-            pygame.Rect(300, 630, 120, 20),
-            pygame.Rect(600, 630, 120, 20),
-            pygame.Rect(900, 630, 120, 20),
+            pygame.Rect(180, 630, 140, 20),
+            pygame.Rect(480, 630, 140, 20),
+            pygame.Rect(780, 630, 140, 20),
         ],
 
-        "cheese": pygame.Rect(1030, 240, 30, 30),
+        "cheese": pygame.Rect(1000, 210, 30, 30),
 
-        "hole": pygame.Rect(80, 580, 60, 60)
+        "hole": pygame.Rect(40, 580, 60, 60)
+    },
+
+    # =========================================
+    # FASE 3
+    # =========================================
+    {
+        "platforms": [
+            pygame.Rect(0, 650, 1200, 50),
+
+            pygame.Rect(150, 560, 80, 20),
+            pygame.Rect(300, 500, 80, 20),
+            pygame.Rect(450, 440, 80, 20),
+            pygame.Rect(600, 380, 80, 20),
+            pygame.Rect(750, 320, 80, 20),
+            pygame.Rect(900, 260, 80, 20),
+            pygame.Rect(1050, 200, 80, 20),
+        ],
+
+        "traps": [
+            pygame.Rect(0, 630, 200, 20),
+            pygame.Rect(300, 630, 200, 20),
+            pygame.Rect(600, 630, 200, 20),
+            pygame.Rect(900, 630, 200, 20),
+        ],
+
+        "cheese": pygame.Rect(1070, 150, 30, 30),
+
+        "hole": pygame.Rect(70, 580, 60, 60)
+    },
+
+    # =========================================
+    # FASE 4
+    # =========================================
+    {
+        "platforms": [
+            pygame.Rect(0, 650, 1200, 50),
+
+            pygame.Rect(90, 560, 70, 20),
+            pygame.Rect(220, 480, 70, 20),
+            pygame.Rect(350, 400, 70, 20),
+            pygame.Rect(480, 320, 70, 20),
+            pygame.Rect(610, 240, 70, 20),
+            pygame.Rect(760, 320, 70, 20),
+            pygame.Rect(900, 400, 70, 20),
+            pygame.Rect(1030, 480, 70, 20),
+        ],
+
+        "traps": [
+            pygame.Rect(150, 630, 180, 20),
+            pygame.Rect(450, 630, 180, 20),
+            pygame.Rect(750, 630, 180, 20),
+        ],
+
+        "cheese": pygame.Rect(1040, 430, 30, 30),
+
+        "hole": pygame.Rect(50, 580, 60, 60)
+    },
+
+    # =========================================
+    # FASE 5
+    # =========================================
+    {
+        "platforms": [
+            pygame.Rect(0, 650, 1200, 50),
+
+            pygame.Rect(80, 560, 60, 20),
+            pygame.Rect(200, 500, 60, 20),
+            pygame.Rect(320, 440, 60, 20),
+            pygame.Rect(440, 380, 60, 20),
+            pygame.Rect(560, 320, 60, 20),
+            pygame.Rect(680, 260, 60, 20),
+            pygame.Rect(800, 200, 60, 20),
+            pygame.Rect(920, 140, 60, 20),
+            pygame.Rect(1040, 200, 60, 20),
+        ],
+
+        "traps": [
+            pygame.Rect(100, 630, 250, 20),
+            pygame.Rect(450, 630, 250, 20),
+            pygame.Rect(800, 630, 250, 20),
+        ],
+
+        "cheese": pygame.Rect(1060, 150, 30, 30),
+
+        "hole": pygame.Rect(40, 580, 60, 60)
     }
 ]
 
@@ -93,8 +213,8 @@ hole = levels[current_level]["hole"]
 player = pygame.Rect(100, 500, 48, 48)
 
 player_vel_y = 0
-player_speed = 6
-jump_force = -15
+player_speed = 5
+jump_force = -13
 on_ground = False
 
 # =========================================
@@ -105,7 +225,6 @@ score = 0
 victory = False
 running = True
 
-# ESTADO DO JOGO
 game_state = "menu"
 
 # =========================================
@@ -155,6 +274,16 @@ def reset_player():
     cheese_collected = False
 
 
+def draw_gradient():
+
+    for y in range(HEIGHT):
+
+        r = 20 + int(y * 0.05)
+        g = 30 + int(y * 0.08)
+        b = 70 + int(y * 0.15)
+
+        pygame.draw.line(screen, (r, g, b), (0, y), (WIDTH, y))
+
 # =========================================
 # LOOP PRINCIPAL
 # =========================================
@@ -172,13 +301,11 @@ while running:
 
         if event.type == pygame.KEYDOWN:
 
-            # MENU
             if game_state == "menu":
 
                 if event.key == pygame.K_RETURN:
                     game_state = "playing"
 
-            # JOGO
             elif game_state == "playing":
 
                 if event.key == pygame.K_SPACE and on_ground:
@@ -193,7 +320,6 @@ while running:
                     load_level()
                     reset_player()
 
-            # REINICIAR APÓS VITÓRIA
             if victory:
 
                 if event.key == pygame.K_r:
@@ -212,52 +338,45 @@ while running:
     # =========================================
     if game_state == "menu":
 
-        screen.fill((25, 25, 40))
+        draw_gradient()
 
         title = big_font.render(
-            "Transformouse",
+            "TRANSOFORMOUSE",
             True,
             YELLOW
         )
 
+
         start_text = font.render(
-            "Pressione ENTER para jogar",
-            True,
-            WHITE
-        )
-
-        controls1 = font.render(
-            "A/D para mover",
-            True,
-            BLUE
-        )
-
-        controls2 = font.render(
-            "ESPAÇO para pular",
-            True,
-            BLUE
-        )
-
-        objective = font.render(
-            "Pegue o queijo e volte para a toca!",
+            "PRESSIONE ENTER PARA JOGAR",
             True,
             GREEN
         )
 
-        screen.blit(title, (280, 180))
-        screen.blit(start_text, (390, 300))
-        screen.blit(controls1, (470, 380))
-        screen.blit(controls2, (445, 430))
-        screen.blit(objective, (300, 520))
+        pygame.draw.rect(
+            screen,
+            (15, 15, 30),
+            (250, 160, 700, 350),
+            border_radius=25
+        )
+
+        pygame.draw.rect(
+            screen,
+            PURPLE,
+            (250, 160, 700, 350),
+            4,
+            border_radius=25
+        )
+
+        screen.blit(title, (290, 210))
+
+        screen.blit(start_text, (350, 400))
 
     # =========================================
     # GAMEPLAY
     # =========================================
     elif game_state == "playing":
 
-        # =========================================
-        # MOVIMENTO
-        # =========================================
         keys = pygame.key.get_pressed()
 
         if not victory:
@@ -268,17 +387,13 @@ while running:
             if keys[pygame.K_d]:
                 player.x += player_speed
 
-        # =========================================
-        # GRAVIDADE
-        # =========================================
+        # gravidade
         player_vel_y += GRAVITY
         player.y += player_vel_y
 
         on_ground = False
 
-        # =========================================
-        # COLISÃO PLATAFORMAS
-        # =========================================
+        # colisão
         for platform in platforms:
 
             if player.colliderect(platform):
@@ -289,18 +404,14 @@ while running:
                     player_vel_y = 0
                     on_ground = True
 
-        # =========================================
-        # LIMITES
-        # =========================================
+        # limites
         if player.left < 0:
             player.left = 0
 
         if player.right > WIDTH:
             player.right = WIDTH
 
-        # =========================================
-        # ARMADILHAS
-        # =========================================
+        # armadilhas
         for trap in traps:
 
             if player.colliderect(trap):
@@ -313,23 +424,8 @@ while running:
 
                 reset_player()
 
-        # =========================================
-        # PEGAR QUEIJO
-        # =========================================
-        if player.colliderect(cheese) and not cheese_collected:
 
-            cheese_collected = True
-            score += 100
-
-            create_particles(
-                cheese.centerx,
-                cheese.centery,
-                YELLOW
-            )
-
-        # =========================================
-        # TOCA
-        # =========================================
+        # toca
         if player.colliderect(hole) and cheese_collected:
 
             create_particles(
@@ -349,9 +445,7 @@ while running:
 
                 victory = True
 
-        # =========================================
-        # PARTÍCULAS
-        # =========================================
+        # partículas
         for particle in particles[:]:
 
             particle["x"] += particle["dx"]
@@ -363,80 +457,11 @@ while running:
                 particles.remove(particle)
 
         # =========================================
-        # CENÁRIO FLORESTA
+        # FUNDO
         # =========================================
-        sky_color = (120, 200, 255)
-        grass_color = (70, 170, 70)
+        screen.blit(background, (0, 0))
 
-        # céu
-        screen.fill(sky_color)
-
-        # chão
-        pygame.draw.rect(
-            screen,
-            grass_color,
-            (0, 620, WIDTH, 80)
-        )
-
-        # montanhas
-        pygame.draw.polygon(
-            screen,
-            (90, 120, 90),
-            [(0, 620), (250, 300), (500, 620)]
-        )
-
-        pygame.draw.polygon(
-            screen,
-            (70, 100, 70),
-            [(300, 620), (650, 250), (900, 620)]
-        )
-
-        pygame.draw.polygon(
-            screen,
-            (80, 110, 80),
-            [(700, 620), (1000, 320), (1200, 620)]
-        )
-
-        # árvores
-        for x in range(0, WIDTH, 120):
-
-            pygame.draw.rect(
-                screen,
-                (120, 70, 20),
-                (x + 40, 520, 25, 100)
-            )
-
-            pygame.draw.circle(
-                screen,
-                (40, 140, 40),
-                (x + 52, 500),
-                45
-            )
-
-            pygame.draw.circle(
-                screen,
-                (50, 160, 50),
-                (x + 25, 515),
-                35
-            )
-
-            pygame.draw.circle(
-                screen,
-                (50, 160, 50),
-                (x + 80, 515),
-                35
-            )
-
-        # nuvens
-        for x in range(100, WIDTH, 300):
-
-            pygame.draw.circle(screen, WHITE, (x, 100), 30)
-            pygame.draw.circle(screen, WHITE, (x + 30, 90), 35)
-            pygame.draw.circle(screen, WHITE, (x + 60, 100), 30)
-
-        # =========================================
-        # PLATAFORMAS
-        # =========================================
+        # plataformas
         for platform in platforms:
 
             pygame.draw.rect(
@@ -454,9 +479,7 @@ while running:
                 border_radius=10
             )
 
-        # =========================================
-        # ARMADILHAS
-        # =========================================
+        # armadilhas
         for trap in traps:
 
             pygame.draw.rect(screen, RED, trap)
@@ -472,71 +495,39 @@ while running:
                         (i + 14, trap.y)
                     ]
                 )
-
         # =========================================
-        # TOCA
+        # PEGAR QUEIJO
         # =========================================
-        pygame.draw.ellipse(screen, BROWN, hole)
+        if player.colliderect(cheese) and not cheese_collected:
+            cheese_collected = True
+            score += 100
 
-        pygame.draw.ellipse(
-            screen,
-            BLACK,
-            (hole.x + 10, hole.y + 10, 40, 40)
-        )
-
-        # =========================================
-        # QUEIJO
-        # =========================================
-        if not cheese_collected:
-
-            pygame.draw.circle(
-                screen,
-                YELLOW,
-                cheese.center,
-                20
+            create_particles(
+                cheese.centerx,
+                cheese.centery,
+                YELLOW
             )
 
         # =========================================
-        # RATINHO
+        # QUEIJO IMAGEM
         # =========================================
-        pygame.draw.line(
-            screen,
-            (255, 150, 200),
-            (player.x + 20, player.y + 25),
-            (player.x - 20, player.y + 10),
-            5
+        if not cheese_collected:
+            screen.blit(
+                cheese_img,
+                (cheese.x - 5, cheese.y - 5)
+            )
+        # =========================================
+        # TOCA IMAGEM
+        # =========================================
+        screen.blit(
+            hole_img,
+            (hole.x + 2, hole.y + 2)
         )
-
-        pygame.draw.ellipse(screen, GRAY, player)
-
-        pygame.draw.ellipse(
-            screen,
-            (220, 220, 220),
-            (player.x + 10, player.y + 16, 28, 22)
-        )
-
-        pygame.draw.circle(screen, GRAY, (player.x + 10, player.y + 8), 10)
-        pygame.draw.circle(screen, GRAY, (player.x + 38, player.y + 8), 10)
-
-        pygame.draw.circle(screen, (255, 170, 200), (player.x + 10, player.y + 8), 5)
-        pygame.draw.circle(screen, (255, 170, 200), (player.x + 38, player.y + 8), 5)
-
-        pygame.draw.circle(screen, BLACK, (player.x + 16, player.y + 20), 4)
-        pygame.draw.circle(screen, BLACK, (player.x + 32, player.y + 20), 4)
-
-        pygame.draw.circle(screen, RED, (player.x + 24, player.y + 28), 4)
-
-        pygame.draw.line(screen, WHITE, (player.x + 24, player.y + 28), (player.x + 45, player.y + 24), 2)
-        pygame.draw.line(screen, WHITE, (player.x + 24, player.y + 30), (player.x + 45, player.y + 30), 2)
-        pygame.draw.line(screen, WHITE, (player.x + 24, player.y + 32), (player.x + 45, player.y + 36), 2)
-
-        pygame.draw.line(screen, WHITE, (player.x + 24, player.y + 28), (player.x + 3, player.y + 24), 2)
-        pygame.draw.line(screen, WHITE, (player.x + 24, player.y + 30), (player.x + 3, player.y + 30), 2)
-        pygame.draw.line(screen, WHITE, (player.x + 24, player.y + 32), (player.x + 3, player.y + 36), 2)
-
         # =========================================
-        # PARTÍCULAS
+        # RATINHO IMAGEM
         # =========================================
+        screen.blit(mouse_img, (player.x - 6, player.y - 6))
+        # partículas
         for particle in particles:
 
             pygame.draw.circle(
@@ -546,9 +537,7 @@ while running:
                 3
             )
 
-        # =========================================
         # HUD
-        # =========================================
         score_text = font.render(
             f"Score: {score}",
             True,
@@ -561,19 +550,10 @@ while running:
             BLUE
         )
 
-        controls_text = font.render(
-            "A/D mover | ESPAÇO pular",
-            True,
-            WHITE
-        )
-
         screen.blit(score_text, (20, 20))
         screen.blit(level_text, (20, 60))
-        screen.blit(controls_text, (20, 100))
 
-        # =========================================
-        # VITÓRIA
-        # =========================================
+        # vitória
         if victory:
 
             victory_text = big_font.render(
@@ -588,9 +568,10 @@ while running:
                 WHITE
             )
 
-            screen.blit(victory_text, (380, 280))
-            screen.blit(restart_text, (420, 360))
+            screen.blit(victory_text, (320, 260))
+            screen.blit(restart_text, (390, 360))
 
     pygame.display.flip()
 
 pygame.quit()
+
